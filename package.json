@@ -4,7 +4,7 @@
   "description": "This is the backend that is developed for a bakery which users can see products and place orders for the products. Owner and edit the products and orders. ",
   "main": "index.js",
   "scripts": {
-    "devStart": "npm run server.js"
+    "devStart": "nodemon server.js"
   },
   "author": "Ridma Jayasundara",
   "license": "ISC",
