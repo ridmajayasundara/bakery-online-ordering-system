@@ -1,0 +1,17 @@
+{
+  "name": "bakery-online-ordering-system",
+  "version": "1.0.0",
+  "description": "This is the backend that is developed for a bakery which users can see products and place orders for the products. Owner and edit the products and orders. ",
+  "main": "index.js",
+  "scripts": {
+    "devStart": "npm run server.js"
+  },
+  "author": "Ridma Jayasundara",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.21"
+  }
+}
