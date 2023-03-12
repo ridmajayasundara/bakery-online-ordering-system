@@ -9,7 +9,7 @@ route.get('/',(req,res,next)=>{
 })
 
 route.post('/',(req,res,next)=>{
-    res.status(200).json({
+    res.status(201).json({
         Message : "order post request"
     })
 })
