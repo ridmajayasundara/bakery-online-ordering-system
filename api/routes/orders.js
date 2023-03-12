@@ -9,8 +9,13 @@ route.get('/',(req,res,next)=>{
 })
 
 route.post('/',(req,res,next)=>{
+    const order = {
+        orderId : req.body.orderId,
+        quantity : req.body.quantity
+    };
     res.status(201).json({
-        Message : "order post request"
+        Message : "order post request",
+        orderId : orderId
     })
 })
 
