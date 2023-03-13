@@ -46,6 +46,16 @@ router.post('/',(req,res,next)=>{
     
 })
 
+router.delete('/', async (req, res) => {
+    try {
+      await Product.deleteMany();
+      res.json({ message: 'all items deleted successfully' });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error with deleting all');
+    }
+  });
+
 router.get('/:productId',(req,res,next)=>{
     const id = req.params.productId;
     Product.findById(id)
@@ -82,10 +92,22 @@ router.patch('/:productId',(req,res,next)=>{
 })
 
 
-router.delete('/:productId',(req,res,next)=>{
+router.delete('/:id', async (req, res) => {
+    try {
+      await Product.deleteOne({ _id: req.params.id });
+      res.json({ message: 'Item deleted successfully' });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json({
+       message : 'Server Error',
+        error : err
+    }
+        );
+    }
+  });
 
-            
-})
+  
+
 
 
 module.exports = router;
