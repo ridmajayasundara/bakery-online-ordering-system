@@ -2,6 +2,8 @@ const express = require('express');
 const { default: mongoose } = require('mongoose');
 const router = express.Router();
 
+// MIGHT HAVE TO CONVERT ALL THE FUCTIONS TO ASYNC-AWAIT : SEEMS LIKE THE BETTER WAY
+
 const Product = require('../models/product');
 
 router.get('/',(req,res,next)=>{
@@ -84,10 +86,22 @@ router.get('/:productId',(req,res,next)=>{
 
 router.patch('/:productId',(req,res,next)=>{
     const id = req.params.productId;
-    // 
-    res.status(200).json({
-        message : "product ID extracted patch req",
-        id : id
+    const updateList = {};
+    for(const item of req.body){
+        updateList[item.propertyName] = item.propertyValue;
+    }
+    Product.updateOne({_id : id},{$set: updateList})
+    .exec()
+    .then(result=>{
+        res.status(200).json({
+            message : "patch success"
+        })
+    })
+    .catch(error=>{
+        res.status(500).json({
+            message : "server error trying to patch the product",
+            error : error
+        })
     })
 })
 
@@ -107,8 +121,5 @@ router.delete('/:id', async (req, res) => {
   });
 
   
-
-
-
 module.exports = router;
 
