@@ -1,30 +1,73 @@
 const express = require('express');
+const { default: mongoose } = require('mongoose');
 const router = express.Router();
+
+const Product = require('../models/product');
 
 router.get('/',(req,res,next)=>{
     //TODO : send all items
-    res.status(200).json({
-        message : "here you can get all the bakery items"
+    Product.find()
+    .exec() //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    .then(result=>{
+        res.status(200).json({
+            message : "here are all the bakery items in our shop",
+            products : result
+        })
+    })
+    .catch(error=>{
+        res.status(500).json({
+            message : "Server Error at GET /products request",
+            error : error
+        })
     })
 })
 
 router.post('/',(req,res,next)=>{
-    const product = {
+    const product = new Product({
+        _id : new mongoose.Types.ObjectId(),
         name : req.body.name,
-        price : req.body.price
-    };
-    res.status(201).json({
-        message : "here authorized users can edit items : authorization part not yet implimented",
-        product :  product
-    })
+        price : req.body.price,
+        quantity : req.body.quantity
+    });
+    product
+        .save() // IMPORTANT : not sure whether i have to add exec() here or not
+        .then(result=>{
+            console.log("saved to db");
+            console.log(result);
+            res.status(201).json({
+                message : "success!. here authorized users can edit items : authorization part not yet implimented",
+                product :  result // for now we send the created product 
+            })
+        })
+        .catch(error=>{
+            console.log(error);
+            res.status(500).json("server error at /products POST reqest")
+        })
+    
 })
 
 router.get('/:productId',(req,res,next)=>{
     const id = req.params.productId;
-    // 
-    res.status(200).json({
-        message : "product ID extracted get req",
-        id : id
+    Product.findById(id)
+    .exec() // CHECK OUT THIS
+    .then(result =>{
+            if(result){
+                res.status(200).json({
+                message : "Product Found!",
+                product : result
+            })}
+            else{
+                res.status(404).json({
+                    message : "Id you entered has not DB entries"
+                })
+            }  
+        })
+    
+    .catch(error =>{
+        res.status(500).json({
+            Message : "An Error occured at /products/:productID GET reqeust",
+            error : error // TODO : remove in the final product
+        })
     })
 })
 
@@ -40,12 +83,8 @@ router.patch('/:productId',(req,res,next)=>{
 
 
 router.delete('/:productId',(req,res,next)=>{
-    const id = req.params.productId;
-    // 
-    res.status(200).json({
-        message : "product ID extracted delete req",
-        id : id
-    })
+
+            
 })
 
 

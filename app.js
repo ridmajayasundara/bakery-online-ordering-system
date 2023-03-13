@@ -1,8 +1,9 @@
 const express = require("express");
 const app = express();
-const mongoose = requre('mongoose');
+const mongoose = require('mongoose');
+require('dotenv').config();
 
-const morgan = require('morgan');
+const morgan = require('morgan'); // to log all the incoming requests to the console
 const bodyParser = require('body-parser');
 
 mongoose.connect('mongodb+srv://ridmajayasundara:'+
