@@ -1,7 +1,13 @@
 const express = require("express");
 const app = express();
+const mongoose = requre('mongoose');
+
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+
+mongoose.connect('mongodb+srv://ridmajayasundara:'+
+    process.env.MONGO_DB_PW_bakery_db+
+    '@bakery-db.jsiezrz.mongodb.net/?retryWrites=true&w=majority');
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
