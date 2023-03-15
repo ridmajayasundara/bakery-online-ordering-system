@@ -2,18 +2,29 @@ const express = require('express');
 const { default: mongoose } = require('mongoose');
 const router = express.Router();
 
+require('dotenv').config();
 // MIGHT HAVE TO CONVERT ALL THE FUCTIONS TO ASYNC-AWAIT : SEEMS LIKE THE BETTER WAY
 
 const Product = require('../models/product');
 
 router.get('/',(req,res,next)=>{
-    //TODO : send all items
     Product.find()
-    .exec() //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    .select('_id name price quantity')
+    .exec() //>>>>>>>>>>>>>>>>>
     .then(result=>{
+        const result_count = result.length
         res.status(200).json({
             message : "here are all the bakery items in our shop",
-            products : result
+            total_count : result_count,
+            products : result.map(doc=>{
+                return{
+                    product : doc,
+                    request : {
+                        type : 'GET',
+                        url : process.env.URL + process.env.PORT + '/a/'+ doc._id, // TODO : get the route from somewhere else rather than hard coding it
+                    }
+                }
+            })
         })
     })
     .catch(error=>{
@@ -38,7 +49,15 @@ router.post('/',(req,res,next)=>{
             console.log(result);
             res.status(201).json({
                 message : "success!. here authorized users can edit items : authorization part not yet implimented",
-                product :  result // for now we send the created product 
+                product :  result.map(doc=>{
+                    return {
+                        product : doc,
+                        request : {
+                            type : 'GET',
+                            url : process.env.URL + process.env.PORT + '/a/'+ doc._id, // TODO : get the route from somewhere else rather than hard coding it                        
+                        }
+                    }
+                })
             })
         })
         .catch(error=>{
@@ -61,6 +80,7 @@ router.delete('/', async (req, res) => {
 router.get('/:productId',(req,res,next)=>{
     const id = req.params.productId;
     Product.findById(id)
+    .select('_id name price quantity')
     .exec() // CHECK OUT THIS
     .then(result =>{
             if(result){
