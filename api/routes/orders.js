@@ -6,6 +6,19 @@ const Order = require('../models/order');
 
 
 route.get('/',(req,res,next)=>{
+    Order.find()
+    .then(result=>{
+        res.status(200).json({
+            message : "here are all the orders in the system",
+            orders : result
+        })
+    })
+    .catch(error=>{
+        res.status(500).json({
+            message : 'server error tring to get all orders',
+            error : error
+        })
+    })
     res.status(200).json({
         Message : "order get request"
     })
