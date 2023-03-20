@@ -7,10 +7,21 @@ const Order = require('../models/order');
 
 route.get('/',(req,res,next)=>{
     Order.find()
+    .select('_id product quantity')
     .then(result=>{
         res.status(200).json({
             message : "here are all the orders in the system",
-            orders : result
+            orders : result.map(re=>{
+                return{
+                    _id : re._id,
+                    product :re.product,
+                    quantity : re.quantity,
+                    request : {
+                        type : 'GET',
+                        url : "add the url later"
+                    } 
+                }
+            })
         })
     })
     .catch(error=>{
