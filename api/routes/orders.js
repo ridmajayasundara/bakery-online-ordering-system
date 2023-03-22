@@ -46,7 +46,11 @@ route.post('/',(req,res,next)=>{
     then(result=>{
         res.status(201).json({
             message : 'order stored successfully!',
-            order_object : result
+            createdOrder : {
+                _id : result._id,
+                product : result.product,
+                quantity : result.quantity
+            }
         })
     })
     .catch(error=>{
