@@ -74,16 +74,35 @@ route.post('/',(req,res,next)=>{
 })
 
 route.get('/:orderId',(req,res,next)=>{
-    res.status(200).json({
-        Message : "order id get request",
-        id : req.params.orderId
+    Order.findById(req.params.orderId)
+    .exec()
+    .then(order=>{
+        res.status(200).json({
+            order : order   
+        })
+    })
+    .catch(error=>{ 
+        res.status(500).json({
+            message : "error with find order by ID",
+            error : error
+        })
+        
     })
 })
 
 route.delete('/:orderId',(req,res,next)=>{
-    res.status(200).json({
-        Message : "order id delete request",
-        id : req.params.orderId
+    Order.deleteOne({_id : req.params.orderId})
+    .exec()
+    .then(result=>{
+        res.status(200).json({
+            message : "Deleted Successfully!"
+        });
+    })
+    .catch(error=>{
+        res.status(500).json({
+            message : "Delete not complete, Server error",
+            error : error
+        });
     })
 })
 
