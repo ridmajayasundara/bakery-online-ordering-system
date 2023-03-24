@@ -36,7 +36,7 @@ const Product = require('../models/product');
 
 router.get('/',(req,res,next)=>{
     Product.find()
-    .select('_id name price quantity')
+    .select('_id name price quantity productImageLink')
     .exec() //>>>>>>>>>>>>>>>>>
     .then(result=>{
         const result_count = result.length
@@ -48,7 +48,7 @@ router.get('/',(req,res,next)=>{
                     product : doc,
                     request : {
                         type : 'GET',
-                        url : process.env.URL + process.env.PORT + '/a/'+ doc._id, // TODO : get the route from somewhere else rather than hard coding it
+                        url : process.env.URL +':'+ process.env.PORT + '/a/'+ doc._id, // TODO : get the route from somewhere else rather than hard coding it
                     }
                 }
             })
@@ -108,7 +108,7 @@ router.delete('/', async (req, res) => {
 router.get('/:productId',(req,res,next)=>{
     const id = req.params.productId;
     Product.findById(id)
-    .select('_id name price quantity')
+    .select('_id name price quantity productImageLink')
     .exec() // CHECK OUT THIS
     .then(result =>{
             if(result){
