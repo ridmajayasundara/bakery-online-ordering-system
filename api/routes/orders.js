@@ -3,6 +3,7 @@ const route = express.Router();
 
 const mongoose = require('mongoose');
 const Order = require('../models/order');
+const Product = require('../models/product'); 
 
 
 route.get('/',(req,res,next)=>{
@@ -36,32 +37,34 @@ route.get('/',(req,res,next)=>{
 })
 
 route.post('/',(req,res,next)=>{
-    const order = new Order({
-        _id : mongoose.Types.ObjectId(),
-        product : req.body.productId,
-        quantity : req.body.quantity
-
+    Product.findById(req.body.productId)
+    .then(product =>{
+        const order = new Order({
+            id : mongoose.Types.ObjectId,
+            product : req.body.productId,
+            quantity : req.body.quantity
+        });
+        return order.save();
     })
-    order.save()
-    then(result=>{
+    .then(result=>{
         res.status(201).json({
             message : 'order stored successfully!',
             createdOrder : {
-                _id : result._id,
+                _id : result.ObjectId,
                 product : result.product,
                 quantity : result.quantity
+            },
+            request : {
+                type : 'GET',
+                url : 'url later' + result.ObjectId + ' '
             }
-        })
+            })
     })
     .catch(error=>{
         res.status(500).json({
             message : "server error when trying to store order",
             error : error
         })
-    })
-    res.status(201).json({
-        Message : "order post request",
-        orderId : orderId
     })
 })
 
