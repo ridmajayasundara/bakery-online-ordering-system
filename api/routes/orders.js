@@ -31,9 +31,6 @@ route.get('/',(req,res,next)=>{
             error : error
         })
     })
-    res.status(200).json({
-        Message : "order get request"
-    })
 })
 
 route.post('/',(req,res,next)=>{
@@ -45,7 +42,7 @@ route.post('/',(req,res,next)=>{
             })
         }
         const order = new Order({
-            id : mongoose.Types.ObjectId,
+            _id : new mongoose.Types.ObjectId(),
             product : req.body.productId,
             quantity : req.body.quantity
         });
