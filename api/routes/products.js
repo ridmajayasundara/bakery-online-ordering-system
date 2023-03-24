@@ -2,6 +2,33 @@ const express = require('express');
 const { default: mongoose } = require('mongoose');
 const router = express.Router();
 
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination : function(req, res, cb){
+        cb(null,'./uploads');
+    },
+    filename : function(req,file,cb){
+        cb(null, new Date().toISOString()+'$' + file.originalname); // $ can be used to get the original name later 
+    }
+
+})
+const fileFilter = function(req,file,cb){
+    if(file.mimetype == 'image/jpeg' || file.mimetype == 'image/png'){
+        cb(null,true);
+    }
+    else{ // if file is not jpeg or png server will note save and will NOT throw an error
+        cb(null,false);
+    }
+}
+const upload = multer(
+    {
+        storage : storage,
+        limits : {
+            fileSize : 1024 * 1024 * 10 // 10 mb max is decided
+        },
+        fileFilter : fileFilter
+    });
+
 require('dotenv').config();
 // MIGHT HAVE TO CONVERT ALL THE FUCTIONS TO ASYNC-AWAIT : SEEMS LIKE THE BETTER WAY
 
@@ -35,15 +62,16 @@ router.get('/',(req,res,next)=>{
     })
 })
 
-router.post('/',(req,res,next)=>{
+router.post('/',upload.single('productImage'),(req,res,next)=>{
     const product = new Product({
         _id : new mongoose.Types.ObjectId(),
         name : req.body.name,
         price : req.body.price,
-        quantity : req.body.quantity
+        quantity : req.body.quantity,
+        productImageLink :process.env.URL + ':' + process.env.PORT +'/' + req.file.path
     });
     product
-        .save() // IMPORTANT : not sure whether i have to add exec() here or not
+        .save() 
         .then(result=>{
             console.log("saved to db");
             console.log(result);
