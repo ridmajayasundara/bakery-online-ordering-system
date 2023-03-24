@@ -52,8 +52,8 @@ route.post('/',(req,res,next)=>{
         res.status(201).json({
             message : 'order stored successfully!',
             createdOrder : {
-                _id : result.ObjectId,
-                product : result.product,
+                _id : result._id,
+                productId : result.product,
                 quantity : result.quantity
             },
             request : {
