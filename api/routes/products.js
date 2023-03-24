@@ -48,21 +48,21 @@ router.post('/',(req,res,next)=>{
             console.log("saved to db");
             console.log(result);
             res.status(201).json({
-                message : "success!. here authorized users can edit items : authorization part not yet implimented",
-                product :  result.map(doc=>{
-                    return {
-                        product : doc,
-                        request : {
-                            type : 'GET',
-                            url : process.env.URL + process.env.PORT + '/a/'+ doc._id, // TODO : get the route from somewhere else rather than hard coding it                        
-                        }
+                message : "success! saved to db",
+                    product : result,
+                    request : {
+                        type : 'GET',
+                        //url : process.env.URL + process.env.PORT + '/a/'+ result._id, // TODO : get the route from somewhere else rather than hard coding it                        
                     }
                 })
             })
-        })
         .catch(error=>{
             console.log(error);
-            res.status(500).json("server error at /products POST reqest")
+            res.status(500).json({
+                message : "server error at /products POST reqest",
+                error : error
+            }
+            )
         })
     
 })
@@ -128,8 +128,16 @@ router.patch('/:productId',(req,res,next)=>{
 
 router.delete('/:id', async (req, res) => {
     try {
-      await Product.deleteOne({ _id: req.params.id });
-      res.json({ message: 'Item deleted successfully' });
+      const retval = await Product.deleteOne({ _id: req.params.id });
+      if(retval.deletedCount == 0){
+        return res.status(404).json({
+            message : 'product not found'
+        })
+      }na
+      res.json({ 
+        message: 'Item deleted successfully',
+        returnValue : retval
+     });
     } catch (err) {
       console.error(err.message);
       res.status(500).json({
