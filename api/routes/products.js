@@ -2,6 +2,9 @@ const express = require('express');
 const { default: mongoose } = require('mongoose');
 const router = express.Router();
 
+const checkAuth = require('../middleware/check-auth')
+
+
 const multer = require('multer');
 const storage = multer.diskStorage({
     destination : function(req, res, cb){
@@ -62,7 +65,7 @@ router.get('/',(req,res,next)=>{
     })
 })
 
-router.post('/',upload.single('productImage'),(req,res,next)=>{
+router.post('/',checkAuth,upload.single('productImage'),(req,res,next)=>{
     const product = new Product({
         _id : new mongoose.Types.ObjectId(),
         name : req.body.name,
@@ -95,7 +98,7 @@ router.post('/',upload.single('productImage'),(req,res,next)=>{
     
 })
 
-router.delete('/', async (req, res) => {
+router.delete('/',checkAuth,async (req, res) => {
     try {
       await Product.deleteMany();
       res.json({ message: 'all items deleted successfully' });
@@ -132,7 +135,7 @@ router.get('/:productId',(req,res,next)=>{
 })
 
 
-router.patch('/:productId',(req,res,next)=>{
+router.patch('/:productId',checkAuth,(req,res,next)=>{
     const id = req.params.productId;
     const updateList = {};
     for(const item of req.body){
@@ -154,7 +157,7 @@ router.patch('/:productId',(req,res,next)=>{
 })
 
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', checkAuth,async (req, res) => {
     try {
       const retval = await Product.deleteOne({ _id: req.params.id });
       if(retval.deletedCount == 0){

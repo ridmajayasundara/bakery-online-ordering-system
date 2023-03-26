@@ -5,13 +5,16 @@ const mongoose = require('mongoose');
 const Order = require('../models/order');
 const Product = require('../models/product'); 
 
+const checkAuth = require('../middleware/check-auth')
 
-route.get('/',(req,res,next)=>{
+
+route.get('/',checkAuth,(req,res,next)=>{
     Order.find()
     .select('_id product quantity')
     .then(result=>{
         res.status(200).json({
             message : "here are all the orders in the system",
+            count : result.length,
             orders : result.map(re=>{
                 return{
                     _id : re._id,
@@ -33,7 +36,7 @@ route.get('/',(req,res,next)=>{
     })
 })
 
-route.post('/',(req,res,next)=>{
+route.post('/',checkAuth,(req,res,next)=>{
     Product.findById(req.body.productId)
     .then(product =>{
         if(!product){
@@ -70,7 +73,7 @@ route.post('/',(req,res,next)=>{
     })
 })
 
-route.get('/:orderId',(req,res,next)=>{
+route.get('/:orderId',checkAuth,(req,res,next)=>{
     Order.findById(req.params.orderId)
     .exec()
     .then(order=>{
@@ -87,7 +90,7 @@ route.get('/:orderId',(req,res,next)=>{
     })
 })
 
-route.delete('/:orderId',(req,res,next)=>{
+route.delete('/:orderId',checkAuth,(req,res,next)=>{
     Order.deleteOne({_id : req.params.orderId})
     .exec()
     .then(result=>{
