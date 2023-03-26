@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+require('dotenv').config();
 
 const User = require('../models/user');
 
@@ -44,6 +47,45 @@ router.post('/signup',(req,res,next)=>{
     })
      
      
+})
+
+router.post('/login',(req,res,next)=>{
+    User.find({email : req.body.email})
+    .then(userList=>{
+        if(userList.length<1){
+            return res.status(404).json({
+                message : "authentication fail"
+            })
+        }
+        bcrypt.compare(req.body.password,userList[0].password,(error,result)=>{
+            if(error){
+                return res.status(404).json({
+                    message : "authentication fail"
+                })
+            }
+            if(result){
+                const token = jwt.sign({
+                    email : userList[0].email,
+                    _id : userList[0]._id
+                },
+                process.env.JWT_Secrete,
+                {
+                    expiresIn : '2h'
+                }
+                )
+                return res.status(200).json({
+                    message : "authentication success!",
+                    token : token
+                })
+            }
+        })
+    })
+    .catch(error=>{
+        res.status(500).json({
+            message : "error tring to log in",
+            error : error
+        })
+    })
 })
 
 router.delete('/deleteAll',(req,res,next)=>{ // USE WITH CAUTION : DEV MODE ONLY
