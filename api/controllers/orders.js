@@ -1,4 +1,5 @@
-const Orders = require('../models/order');
+const Order = require('../models/order');
+const Product = require('../models/product')
 
 exports.orders_get_all = (req,res,next)=>{
     Order.find()
@@ -23,6 +24,45 @@ exports.orders_get_all = (req,res,next)=>{
     .catch(error=>{
         res.status(500).json({
             message : 'server error tring to get all orders',
+            error : error
+        })
+    })
+}
+
+
+
+exports.new_order = (req,res,next)=>{
+    Product.findById(req.body.productId)
+    .then(product =>{
+        if(!product){
+            return res.status(404).json({
+                message : 'product not found',
+            })
+        }
+        const order = new Order({
+            _id : new mongoose.Types.ObjectId(),
+            product : req.body.productId,
+            quantity : req.body.quantity
+        });
+        return order.save();
+    })
+    .then(result=>{
+        res.status(201).json({
+            message : 'order stored successfully!',
+            createdOrder : {
+                _id : result._id,
+                productId : result.product,
+                quantity : result.quantity
+            },
+            request : {
+                type : 'GET',
+                url : 'url later' + result.ObjectId + ' '
+            }
+            })
+    })
+    .catch(error=>{
+        res.status(500).json({
+            message : "server error when trying to store order",
             error : error
         })
     })
