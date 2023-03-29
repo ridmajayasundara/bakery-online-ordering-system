@@ -14,22 +14,7 @@ route.get('/',checkAuth, OrdersController.orders_get_all)
 
 route.post('/',checkAuth,OrdersController.new_order)
 
-route.get('/:orderId',checkAuth,(req,res,next)=>{
-    Order.findById(req.params.orderId)
-    .exec()
-    .then(order=>{
-        res.status(200).json({
-            order : order   
-        })
-    })
-    .catch(error=>{ 
-        res.status(500).json({
-            message : "error with find order by ID",
-            error : error
-        })
-        
-    })
-})
+route.get('/:orderId',checkAuth,OrdersController.get_one_order)
 
 route.delete('/:orderId',checkAuth,(req,res,next)=>{
     Order.deleteOne({_id : req.params.orderId})

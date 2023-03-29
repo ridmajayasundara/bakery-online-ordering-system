@@ -67,3 +67,21 @@ exports.new_order = (req,res,next)=>{
         })
     })
 }
+
+
+exports.get_one_order = (req,res,next)=>{
+    Order.findById(req.params.orderId)
+    .exec()
+    .then(order=>{
+        res.status(200).json({
+            order : order   
+        })
+    })
+    .catch(error=>{ 
+        res.status(500).json({
+            message : "error with find order by ID",
+            error : error
+        })
+        
+    })
+}
